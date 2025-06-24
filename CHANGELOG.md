@@ -1,3 +1,10 @@
+## [1.0.1](https://github.com/rjlee/actual-investment-sync/compare/v1.0.0...v1.0.1) (2025-06-24)
+
+
+### Bug Fixes
+
+* correct service name and container name in docker-compose configuration ([dab9b68](https://github.com/rjlee/actual-investment-sync/commit/dab9b68703ea4c456e63042ee3f0efe51b8d95be))
+
 # 1.0.0 (2025-06-24)
 
 
