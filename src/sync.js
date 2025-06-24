@@ -19,9 +19,7 @@ async function runSync({ verbose = false, useLogger = false } = {}) {
       : { info: () => {}, debug: () => {}, warn: () => {}, error: () => {} };
   const cwd = process.cwd();
   const mappingFile = process.env.MAPPING_FILE || config.MAPPING_FILE || './data/mapping.json';
-  const mappingPath = path.isAbsolute(mappingFile)
-    ? mappingFile
-    : path.join(cwd, mappingFile);
+  const mappingPath = path.isAbsolute(mappingFile) ? mappingFile : path.join(cwd, mappingFile);
 
   // Load or initialize mapping entries
   // Load or initialize mapping entries (stocks & portfolios)
@@ -37,7 +35,11 @@ async function runSync({ verbose = false, useLogger = false } = {}) {
   }
   const stocksArr = Array.isArray(mapping.stocks) ? mapping.stocks : [];
   const portfolios = Array.isArray(mapping.portfolios) ? mapping.portfolios : [];
-  if (verbose) log.debug({ mappingPath, stocks: stocksArr.length, portfolios: portfolios.length }, 'Loaded mapping entries');
+  if (verbose)
+    log.debug(
+      { mappingPath, stocks: stocksArr.length, portfolios: portfolios.length },
+      'Loaded mapping entries'
+    );
 
   log.info('Opening Actual Budget');
   try {

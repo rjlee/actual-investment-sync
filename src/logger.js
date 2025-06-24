@@ -7,7 +7,7 @@ const logger = pino({
 });
 
 // Silence logs during tests to avoid polluting test output
-if (process.env.NODE_ENV === 'test') {
+if (process.env.NODE_ENV === 'test' && !process.env.LOG_LEVEL) {
   logger.level = 'silent';
 }
 

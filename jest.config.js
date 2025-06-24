@@ -1,6 +1,7 @@
 /** @type {import('jest').Config} */
 module.exports = {
   testEnvironment: 'node',
+  resetMocks: true,
   roots: ['<rootDir>/src', '<rootDir>/tests'],
   collectCoverage: true,
   coverageDirectory: 'coverage',

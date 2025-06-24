@@ -14,14 +14,19 @@ async function getFTPrice(key) {
     const resp = await axios.get(FT_URL + encodeURIComponent(key), {
       headers: {
         'User-Agent':
-          'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 '
-          + '(KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
+          'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 ' +
+          '(KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
         Accept: 'text/html,application/xhtml+xml',
       },
     });
     const data = resp.data;
     // Support Yahoo JSON quoteResponse first
-    if (data && typeof data === 'object' && data.quoteResponse && Array.isArray(data.quoteResponse.result)) {
+    if (
+      data &&
+      typeof data === 'object' &&
+      data.quoteResponse &&
+      Array.isArray(data.quoteResponse.result)
+    ) {
       const jm = data.quoteResponse.result[0].regularMarketPrice;
       if (typeof jm === 'number') return jm;
     }
@@ -77,12 +82,9 @@ async function getAlphaVantagePrice(key) {
     });
     const quote = resp.data['Global Quote'];
     const priceText = quote && quote['05. price'];
-    if (!priceText) {
-      throw new Error(`No price data for key ${key} from AlphaVantage`);
-    }
-    const price = parseFloat(priceText.replace(/,/g, ''));
-    if (isNaN(price)) {
-      throw new Error(`Invalid price data for key ${key} from AlphaVantage: ${priceText}`);
+    const price = parseFloat(priceText?.replace(/,/g, ''));
+    if (!priceText || isNaN(price)) {
+      throw new Error(`Invalid price data for key ${key}`);
     }
     return price;
   } catch (err) {
@@ -131,12 +133,12 @@ async function getTwelveDataPrice(key) {
       params: { symbol: key, apikey: apiKey },
     });
     const priceText = resp.data?.price;
+    const price = parseFloat(priceText?.replace(/,/g, ''));
     if (!priceText) {
       throw new Error(`No price data for key ${key} from TwelveData`);
     }
-    const price = parseFloat(priceText.replace(/,/g, ''));
     if (isNaN(price)) {
-      throw new Error(`Invalid price data for key ${key} from TwelveData: ${priceText}`);
+      throw new Error(`Invalid price data for key ${key} from TwelveData`);
     }
     return price;
   } catch (err) {
@@ -175,7 +177,7 @@ async function getPortfolioValue(entry, stocksMap) {
   for (const { name, quantity } of entry.stocks) {
     const def = stocksMap[name];
     if (!def) throw new Error(`Unknown stock definition: ${name}`);
-      const price = await getStockPrice(def.key, def.provider);
+    const price = await getStockPrice(def.key, def.provider);
     total += price * quantity;
   }
   return Number(total.toFixed(2));

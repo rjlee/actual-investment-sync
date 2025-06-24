@@ -17,6 +17,8 @@
   }
 
   async function pollBudget() {
+    // intentionally loop until budget is ready
+    // eslint-disable-next-line no-constant-condition
     while (true) {
       try {
         const res = await fetch('/api/budget-status');
@@ -26,7 +28,9 @@
           budgetEl.className = 'badge bg-success';
           break;
         }
-      } catch {}
+      } catch {
+        // ignore errors while polling budget status
+      }
       budgetEl.textContent = 'Budget downloading';
       budgetEl.className = 'badge bg-info';
       // eslint-disable-next-line no-await-in-loop
@@ -53,11 +57,11 @@
     return `
       <tr>
         <td><input type="text" class="form-control form-control-sm stock-name" data-s="${sIndex}" value="${escapeHtml(
-      stock.name
-    )}"/></td>
+          stock.name
+        )}"/></td>
         <td><input type="text" class="form-control form-control-sm stock-key" data-s="${sIndex}" value="${escapeHtml(
-      stock.key
-    )}" placeholder="Symbol"/></td>
+          stock.key
+        )}" placeholder="Symbol"/></td>
         <td>
           <select class="form-select form-select-sm stock-provider" data-s="${sIndex}">
             <option value="ft"${stock.provider !== 'alphavantage' && stock.provider !== 'finnhub' && stock.provider !== 'twelvedata' ? ' selected' : ''}>FT</option>
@@ -123,8 +127,8 @@
           <div class="mb-3">
             <label class="form-label">Name</label>
             <input type="text" class="form-control portfolio-name" data-p="${pIndex}" value="${escapeHtml(
-      portfolio.name
-    )}"/>
+              portfolio.name
+            )}"/>
           </div>
           <div class="mb-3 row">
             <div class="col">
@@ -169,7 +173,8 @@
         select.className = 'form-select form-select-sm stock-select';
         select.dataset.p = pIndex;
         select.dataset.s = sIndex;
-        select.innerHTML = `<option value="">-- none --</option>` +
+        select.innerHTML =
+          `<option value="">-- none --</option>` +
           stocksConfig
             .map(
               (sc) =>
@@ -179,13 +184,17 @@
             )
             .join('');
         const qty = document.createElement('input');
-        qty.type = 'number'; qty.step = '0.0001';
+        qty.type = 'number';
+        qty.step = '0.0001';
         qty.className = 'form-control form-control-sm stock-qty';
-        qty.dataset.p = pIndex; qty.dataset.s = sIndex;
+        qty.dataset.p = pIndex;
+        qty.dataset.s = sIndex;
         qty.value = st.quantity;
         const rm = document.createElement('button');
-        rm.type = 'button'; rm.className = 'btn-close btn-remove-portfolio-stock';
-        rm.dataset.p = pIndex; rm.dataset.s = sIndex;
+        rm.type = 'button';
+        rm.className = 'btn-close btn-remove-portfolio-stock';
+        rm.dataset.p = pIndex;
+        rm.dataset.s = sIndex;
         const row = document.createElement('tr');
         row.innerHTML = `<td></td><td></td><td></td>`;
         row.children[0].appendChild(select);
@@ -264,7 +273,6 @@
       statusEl.textContent = 'Error: ' + err.message;
     }
   };
-
 
   document.getElementById('syncBtn').onclick = async () => {
     statusEl.textContent = 'Syncing...';

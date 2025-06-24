@@ -46,12 +46,13 @@ _Before you begin, please review the [Security Considerations](#security-conside
 See `.env.example` and `config.example.yaml` for available options.
 
 ### Sync scheduling defaults
+
 By default, portfolio sync runs once every hour on the hour. You can override these settings in `config.yaml` or via environment variables:
 
-| Variable            | Default     | Description                        |
-|---------------------|-------------|------------------------------------|
-| `SYNC_CRON`         | `0 * * * *` | Cron expression for periodic sync  |
-| `SYNC_CRON_TIMEZONE`| `UTC`       | Time zone for the cron schedule    |
+| Variable             | Default     | Description                       |
+| -------------------- | ----------- | --------------------------------- |
+| `SYNC_CRON`          | `0 * * * *` | Cron expression for periodic sync |
+| `SYNC_CRON_TIMEZONE` | `UTC`       | Time zone for the cron schedule   |
 
 ## Releases & Docker
 

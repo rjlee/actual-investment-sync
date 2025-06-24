@@ -157,13 +157,17 @@ describe('error cases in portfolio-client', () => {
 
   it('getAlphaVantagePrice throws if no API key', async () => {
     delete process.env.ALPHAVANTAGE_API_KEY;
-    await expect(getStockPrice('SYM', 'alphavantage')).rejects.toThrow(/AlphaVantage API key must be set/);
+    await expect(getStockPrice('SYM', 'alphavantage')).rejects.toThrow(
+      /AlphaVantage API key must be set/
+    );
   });
 
   it('getAlphaVantagePrice throws on invalid price', async () => {
     process.env.ALPHAVANTAGE_API_KEY = 'demo';
     axios.get.mockResolvedValueOnce({ data: { 'Global Quote': { '05. price': 'NaN' } } });
-    await expect(getStockPrice('SYM', 'alphavantage')).rejects.toThrow(/Invalid price data for key SYM/);
+    await expect(getStockPrice('SYM', 'alphavantage')).rejects.toThrow(
+      /Invalid price data for key SYM/
+    );
   });
 
   it('getFinnhubPrice throws if no API key', async () => {
@@ -179,23 +183,30 @@ describe('error cases in portfolio-client', () => {
 
   it('getTwelveDataPrice throws if no API key', async () => {
     delete process.env.TWELVEDATA_API_KEY;
-    await expect(getStockPrice('SYM', 'twelvedata')).rejects.toThrow(/TwelveData API key must be set/);
+    await expect(getStockPrice('SYM', 'twelvedata')).rejects.toThrow(
+      /TwelveData API key must be set/
+    );
   });
 
   it('getTwelveDataPrice throws on missing price', async () => {
     process.env.TWELVEDATA_API_KEY = 'demo';
     axios.get.mockResolvedValueOnce({ data: {} });
-    await expect(getStockPrice('SYM', 'twelvedata')).rejects.toThrow(/No price data for key SYM from TwelveData/);
+    await expect(getStockPrice('SYM', 'twelvedata')).rejects.toThrow(
+      /No price data for key SYM from TwelveData/
+    );
   });
 
   it('getTwelveDataPrice throws on invalid price', async () => {
     process.env.TWELVEDATA_API_KEY = 'demo';
     axios.get.mockResolvedValueOnce({ data: { price: 'abc' } });
-    await expect(getStockPrice('SYM', 'twelvedata')).rejects.toThrow(/Invalid price data for key SYM from TwelveData/);
+    await expect(getStockPrice('SYM', 'twelvedata')).rejects.toThrow(
+      /Invalid price data for key SYM from TwelveData/
+    );
   });
 
   it('getPortfolioValue throws on unknown stock definition', async () => {
-    await expect(getPortfolioValue({ cash: 0, stocks: [{ name: 'X', quantity: 1 }] }, {}))
-      .rejects.toThrow(/Unknown stock definition: X/);
+    await expect(
+      getPortfolioValue({ cash: 0, stocks: [{ name: 'X', quantity: 1 }] }, {})
+    ).rejects.toThrow(/Unknown stock definition: X/);
   });
 });

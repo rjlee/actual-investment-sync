@@ -3,7 +3,15 @@ resources/
 mapping.json
 budget/
 coverage/
+# Ignore change log and sample config
 CHANGELOG.md
+config.example.yaml
 
 # Ignore EJS templates (server-side rendering)
 **/*.ejs
+
+# Ignore files with unsupported parsers (shell scripts, Dockerfiles, etc.)
+*.sh
+Dockerfile
+.dockerignore
+scripts/

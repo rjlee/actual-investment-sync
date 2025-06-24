@@ -12,8 +12,7 @@ const { openBudget } = require('./utils');
 const { runSync } = require('./sync');
 
 // Helper to wrap async route handlers and forward errors to the global error handler
-const asyncHandler = (fn) => (req, res, next) =>
-  Promise.resolve(fn(req, res, next)).catch(next);
+const asyncHandler = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
 
 /**
  * Generate the HTML for the UI page via EJS template
@@ -21,11 +20,7 @@ const asyncHandler = (fn) => (req, res, next) =>
 function uiPageHtml(uiAuthEnabled) {
   const templatePath = path.join(__dirname, 'views', 'index.ejs');
   const template = fs.readFileSync(templatePath, 'utf8');
-  return ejs.render(
-    template,
-    { uiAuthEnabled },
-    { filename: templatePath }
-  );
+  return ejs.render(template, { uiAuthEnabled }, { filename: templatePath });
 }
 
 /**
@@ -76,11 +71,11 @@ async function startWebUi(httpPort, verbose) {
     );
 
     const LOGIN_PATH = '/login';
-    function loginForm(error) {
+    const loginForm = (error) => {
       const templatePath = path.join(__dirname, 'views', 'login.ejs');
       const template = fs.readFileSync(templatePath, 'utf8');
       return ejs.render(template, { error, LOGIN_PATH }, { filename: templatePath });
-    }
+    };
 
     app.get(LOGIN_PATH, (_req, res) => res.send(loginForm()));
     app.post(LOGIN_PATH, (req, res) => {
@@ -152,7 +147,11 @@ async function startWebUi(httpPort, verbose) {
         logger.error({ err }, 'Failed to fetch Actual Budget accounts');
       }
 
-      return res.json({ stocks: mapping.stocks, portfolios: mapping.portfolios, accounts: accountsList });
+      return res.json({
+        stocks: mapping.stocks,
+        portfolios: mapping.portfolios,
+        accounts: accountsList,
+      });
     })
   );
 
