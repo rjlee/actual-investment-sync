@@ -1,3 +1,10 @@
+## [1.0.2](https://github.com/rjlee/actual-investment-sync/compare/v1.0.1...v1.0.2) (2025-06-27)
+
+
+### Bug Fixes
+
+* update environment variable from ACTUAL_BUDGET_ID to ACTUAL_SYNC_ID in configuration and documentation ([5f152c5](https://github.com/rjlee/actual-investment-sync/commit/5f152c5a4e4b227f03abc1d07a7077fb8fce249d))
+
 ## [1.0.1](https://github.com/rjlee/actual-investment-sync/compare/v1.0.0...v1.0.1) (2025-06-24)
 
 
