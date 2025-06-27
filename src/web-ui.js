@@ -114,17 +114,10 @@ async function startWebUi(httpPort, verbose) {
   app.get(
     '/',
     asyncHandler(async (_req, res) => {
-      if (budgetReady) {
-        try {
-          await api.sync();
-          const opts = {};
-          if (process.env.ACTUAL_BUDGET_ENCRYPTION_PASSWORD) {
-            opts.password = process.env.ACTUAL_BUDGET_ENCRYPTION_PASSWORD;
-          }
-          await api.downloadBudget(process.env.ACTUAL_BUDGET_ID, opts);
-        } catch (err) {
-          logger.error({ err }, 'Failed to sync/download budget on page load');
-        }
+      try {
+        await openBudget();
+      } catch (err) {
+        logger.error({ err }, 'Budget download/sync on page load failed');
       }
       res.send(uiPageHtml(UI_AUTH_ENABLED));
     })

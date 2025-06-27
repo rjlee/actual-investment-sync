@@ -13,7 +13,7 @@ An application to regularly sync stock portfolio values to Actual Budget account
 
 _Before you begin, please review the [Security Considerations](#security-considerations) section below._
 
-1. Copy `.env.example` to `.env` and fill in your Actual Budget settings (`ACTUAL_SERVER_URL`, `ACTUAL_PASSWORD`, `ACTUAL_BUDGET_ID`, and `ACTUAL_BUDGET_ENCRYPTION_PASSWORD` if your budget file is encrypted).
+1. Copy `.env.example` to `.env` and fill in your Actual Budget settings (`ACTUAL_SERVER_URL`, `ACTUAL_PASSWORD`, `ACTUAL_SYNC_ID`, and `ACTUAL_BUDGET_ENCRYPTION_PASSWORD` if your budget file is encrypted).
 2. Copy `config.example.yaml` to `config.yaml` if you need to override defaults (e.g. `SYNC_CRON`, `SYNC_CRON_TIMEZONE`, `HTTP_PORT`, `MAPPING_FILE`).
 3. Build and run with Docker Compose:
    ```bash
