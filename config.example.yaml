@@ -11,5 +11,8 @@ DISABLE_CRON_SCHEDULING: false
 # Port for web UI server (daemon mode only)
 HTTP_PORT: 3000
 
-# Path to JSON file to store portfolio mappings
-MAPPING_FILE: './data/mapping.json'
+# Directory to store mapping and other data
+DATA_DIR: './data'
+
+# Directory for Actual Budget cache (budget files)
+BUDGET_DIR: './data/budget'

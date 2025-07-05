@@ -109,7 +109,9 @@ async function startWebUi(httpPort, verbose) {
     logger.info(meta, 'HTTP request');
     next();
   });
-  const mappingFile = process.env.MAPPING_FILE || config.MAPPING_FILE || './data/mapping.json';
+  const dataDir = process.env.DATA_DIR || config.DATA_DIR || 'data';
+  const absoluteDataDir = path.isAbsolute(dataDir) ? dataDir : path.join(process.cwd(), dataDir);
+  const mappingPath = path.join(absoluteDataDir, 'mapping.json');
 
   app.get(
     '/',
@@ -128,7 +130,7 @@ async function startWebUi(httpPort, verbose) {
     asyncHandler(async (_req, res) => {
       let mapping = { stocks: [], portfolios: [] };
       try {
-        mapping = JSON.parse(fs.readFileSync(mappingFile, 'utf8'));
+        mapping = JSON.parse(fs.readFileSync(mappingPath, 'utf8'));
       } catch {
         // no mapping file or invalid JSON
       }
@@ -153,7 +155,7 @@ async function startWebUi(httpPort, verbose) {
   });
 
   app.post('/api/mappings', (req, res) => {
-    fs.writeFileSync(mappingFile, JSON.stringify(req.body, null, 2));
+    fs.writeFileSync(mappingPath, JSON.stringify(req.body, null, 2));
     res.json({ success: true });
   });
 
