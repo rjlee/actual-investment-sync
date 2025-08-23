@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/rjlee/actual-investment-sync/compare/v1.1.0...v1.2.0) (2025-08-23)
+
+
+### Features
+
+* refactor getBudgetName to use API for budget retrieval and update budget-status endpoint ([7a962e7](https://github.com/rjlee/actual-investment-sync/commit/7a962e796a5848aa709ce4d08254576ec7ac772c))
+
 # [1.1.0](https://github.com/rjlee/actual-investment-sync/compare/v1.0.2...v1.1.0) (2025-08-23)
 
 
