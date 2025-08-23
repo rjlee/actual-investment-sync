@@ -22,17 +22,18 @@
     while (true) {
       try {
         const res = await fetch('/api/budget-status');
-        const { ready } = await res.json();
+        const { ready, name } = await res.json();
         if (ready) {
-          budgetEl.textContent = 'Budget downloaded';
+          budgetEl.textContent = `${name ? name + ' - ' : ''}Budget downloaded`;
           budgetEl.className = 'badge bg-success';
           break;
         }
+        budgetEl.textContent = `${name ? name + ' - ' : ''}Budget downloading`;
+        budgetEl.className = 'badge bg-info';
       } catch {
-        // ignore errors while polling budget status
+        budgetEl.textContent = 'Budget downloading';
+        budgetEl.className = 'badge bg-info';
       }
-      budgetEl.textContent = 'Budget downloading';
-      budgetEl.className = 'badge bg-info';
       // eslint-disable-next-line no-await-in-loop
       await new Promise((r) => setTimeout(r, 1000));
     }

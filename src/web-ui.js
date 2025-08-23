@@ -14,13 +14,48 @@ const { runSync } = require('./sync');
 // Helper to wrap async route handlers and forward errors to the global error handler
 const asyncHandler = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
 
+function getBudgetName() {
+  try {
+    const dataDir = process.env.DATA_DIR || config.DATA_DIR || 'data';
+    const budgetDir = process.env.BUDGET_DIR || config.BUDGET_DIR || path.join(dataDir, 'budget');
+    const resolvedBudgetDir = path.isAbsolute(budgetDir)
+      ? budgetDir
+      : path.join(process.cwd(), budgetDir);
+    const syncId = process.env.ACTUAL_SYNC_ID;
+
+    const entries = fs.readdirSync(resolvedBudgetDir, { withFileTypes: true });
+    let fallbackName = null;
+    for (const ent of entries) {
+      if (!ent.isDirectory()) continue;
+      const metadataPath = path.join(resolvedBudgetDir, ent.name, 'metadata.json');
+      if (!fs.existsSync(metadataPath)) continue;
+      try {
+        const meta = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
+        if (!fallbackName && meta && meta.budgetName) fallbackName = meta.budgetName;
+        if (syncId && meta && meta.cloudFileId === syncId && meta.budgetName) {
+          return meta.budgetName;
+        }
+      } catch (_) {
+        // ignore invalid metadata
+      }
+    }
+    return fallbackName || null;
+  } catch (_) {
+    return null;
+  }
+}
+
 /**
  * Generate the HTML for the UI page via EJS template
  */
 function uiPageHtml(uiAuthEnabled) {
   const templatePath = path.join(__dirname, 'views', 'index.ejs');
   const template = fs.readFileSync(templatePath, 'utf8');
-  return ejs.render(template, { uiAuthEnabled }, { filename: templatePath });
+  return ejs.render(
+    template,
+    { uiAuthEnabled, title: 'actual-investment-sync' },
+    { filename: templatePath }
+  );
 }
 
 /**
@@ -151,7 +186,7 @@ async function startWebUi(httpPort, verbose) {
   );
 
   app.get('/api/budget-status', (_req, res) => {
-    res.json({ ready: budgetReady });
+    res.json({ ready: budgetReady, name: getBudgetName() });
   });
 
   app.post('/api/mappings', (req, res) => {
