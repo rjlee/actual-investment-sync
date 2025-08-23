@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/rjlee/actual-investment-sync/compare/v1.0.2...v1.1.0) (2025-08-23)
+
+
+### Features
+
+* enhance budget status API to include budget name and update UI feedback ([20d615c](https://github.com/rjlee/actual-investment-sync/commit/20d615c26c56507fc84ee69c1b8d9f4cb6312fbb))
+
 ## [1.0.2](https://github.com/rjlee/actual-investment-sync/compare/v1.0.1...v1.0.2) (2025-06-27)
 
 
