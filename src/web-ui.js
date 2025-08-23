@@ -14,35 +14,22 @@ const { runSync } = require('./sync');
 // Helper to wrap async route handlers and forward errors to the global error handler
 const asyncHandler = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
 
-function getBudgetName() {
+async function getBudgetName() {
+  const syncId = process.env.ACTUAL_SYNC_ID;
   try {
-    const dataDir = process.env.DATA_DIR || config.DATA_DIR || 'data';
-    const budgetDir = process.env.BUDGET_DIR || config.BUDGET_DIR || path.join(dataDir, 'budget');
-    const resolvedBudgetDir = path.isAbsolute(budgetDir)
-      ? budgetDir
-      : path.join(process.cwd(), budgetDir);
-    const syncId = process.env.ACTUAL_SYNC_ID;
-
-    const entries = fs.readdirSync(resolvedBudgetDir, { withFileTypes: true });
-    let fallbackName = null;
-    for (const ent of entries) {
-      if (!ent.isDirectory()) continue;
-      const metadataPath = path.join(resolvedBudgetDir, ent.name, 'metadata.json');
-      if (!fs.existsSync(metadataPath)) continue;
-      try {
-        const meta = JSON.parse(fs.readFileSync(metadataPath, 'utf8'));
-        if (!fallbackName && meta && meta.budgetName) fallbackName = meta.budgetName;
-        if (syncId && meta && meta.cloudFileId === syncId && meta.budgetName) {
-          return meta.budgetName;
-        }
-      } catch (_) {
-        // ignore invalid metadata
+    if (typeof api.getBudgets === 'function') {
+      const budgets = await api.getBudgets();
+      if (Array.isArray(budgets)) {
+        const match = budgets.find((b) => b && (b.cloudFileId === syncId || b.id === syncId));
+        if (match && match.name) return match.name;
+        const first = budgets.find((b) => b && b.name);
+        if (first) return first.name;
       }
     }
-    return fallbackName || null;
   } catch (_) {
-    return null;
+    // ignore API errors
   }
+  return null;
 }
 
 /**
@@ -185,9 +172,13 @@ async function startWebUi(httpPort, verbose) {
     })
   );
 
-  app.get('/api/budget-status', (_req, res) => {
-    res.json({ ready: budgetReady, name: getBudgetName() });
-  });
+  app.get(
+    '/api/budget-status',
+    asyncHandler(async (_req, res) => {
+      const name = await getBudgetName();
+      res.json({ ready: budgetReady, name });
+    })
+  );
 
   app.post('/api/mappings', (req, res) => {
     fs.writeFileSync(mappingPath, JSON.stringify(req.body, null, 2));
