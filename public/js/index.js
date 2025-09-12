@@ -252,6 +252,17 @@
         portfoliosConfig[p].stocks[s].quantity = parseFloat(e.target.value) || 0;
       });
     });
+    // Remove a stock row from a portfolio
+    document.querySelectorAll('.btn-remove-portfolio-stock').forEach((btn) => {
+      btn.addEventListener('click', () => {
+        const p = parseInt(btn.dataset.p, 10);
+        const s = parseInt(btn.dataset.s, 10);
+        if (Array.isArray(portfoliosConfig[p].stocks)) {
+          portfoliosConfig[p].stocks.splice(s, 1);
+        }
+        renderPortfolios();
+      });
+    });
   }
 
   document.getElementById('addPortfolioBtn').onclick = () => {
