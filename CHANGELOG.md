@@ -1,3 +1,10 @@
+## [1.2.3](https://github.com/rjlee/actual-investment-sync/compare/v1.2.2...v1.2.3) (2025-11-02)
+
+
+### Bug Fixes
+
+* support actual api version specification in docker compose file ([582a6a4](https://github.com/rjlee/actual-investment-sync/commit/582a6a415b249757338310b06a58e5e27b5f0e48))
+
 ## [1.2.2](https://github.com/rjlee/actual-investment-sync/compare/v1.2.1...v1.2.2) (2025-11-02)
 
 
