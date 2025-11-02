@@ -22,7 +22,7 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Setup Node.js
+      - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -68,7 +68,8 @@ jobs:
 
       - name: Read app version
         id: appver
-        run: echo "version=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
+        run: |
+          echo "version=$(jq -r .version package.json)" >> $GITHUB_OUTPUT
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -163,4 +164,3 @@ jobs:
             echo "Warning: failed to upload combined manifest to release $REL_ID; continuing" >&2
             exit 0
           }
-
