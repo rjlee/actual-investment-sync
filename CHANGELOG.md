@@ -1,3 +1,10 @@
+## [1.2.1](https://github.com/rjlee/actual-investment-sync/compare/v1.2.0...v1.2.1) (2025-11-02)
+
+
+### Bug Fixes
+
+* updating actual-api version ([16b6a2f](https://github.com/rjlee/actual-investment-sync/commit/16b6a2f25f7b44212c3513817bfce22708160ddf))
+
 # [1.2.0](https://github.com/rjlee/actual-investment-sync/compare/v1.1.0...v1.2.0) (2025-08-23)
 
 
