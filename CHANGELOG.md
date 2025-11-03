@@ -1,3 +1,10 @@
+## [1.2.4](https://github.com/rjlee/actual-investment-sync/compare/v1.2.3...v1.2.4) (2025-11-03)
+
+
+### Bug Fixes
+
+* amend cron schedule ([cbf1c84](https://github.com/rjlee/actual-investment-sync/commit/cbf1c84b78e29a75616464b9e4fd3efc9d0e9502))
+
 ## [1.2.3](https://github.com/rjlee/actual-investment-sync/compare/v1.2.2...v1.2.3) (2025-11-02)
 
 

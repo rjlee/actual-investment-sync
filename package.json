@@ -1,6 +1,6 @@
 {
   "name": "actual-investment-sync",
-  "version": "1.2.3",
+  "version": "1.2.4",
   "description": "Sync stock portfolio values to Actual Budget accounts",
   "main": "src/index.js",
   "scripts": {
