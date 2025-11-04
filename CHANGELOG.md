@@ -1,3 +1,10 @@
+## [1.2.5](https://github.com/rjlee/actual-investment-sync/compare/v1.2.4...v1.2.5) (2025-11-04)
+
+
+### Bug Fixes
+
+* adopt reusable workflows; gate release on CI; nightly Docker build; add GHCR cleanup; harden Dockerfile ([0110f5f](https://github.com/rjlee/actual-investment-sync/commit/0110f5f22db0be5701bbc10b62587f3d8e1e267f))
+
 ## [1.2.4](https://github.com/rjlee/actual-investment-sync/compare/v1.2.3...v1.2.4) (2025-11-03)
 
 
