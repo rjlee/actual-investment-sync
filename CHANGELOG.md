@@ -1,3 +1,10 @@
+## [1.2.7](https://github.com/rjlee/actual-investment-sync/compare/v1.2.6...v1.2.7) (2025-11-04)
+
+
+### Bug Fixes
+
+* FIx build requirements in Dockerfile ([d8f6905](https://github.com/rjlee/actual-investment-sync/commit/d8f69053684ebea10aaab679fdb18febe9fa6be6))
+
 ## [1.2.6](https://github.com/rjlee/actual-investment-sync/compare/v1.2.5...v1.2.6) (2025-11-04)
 
 
