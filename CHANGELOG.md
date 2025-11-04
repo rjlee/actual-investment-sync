@@ -1,3 +1,10 @@
+## [1.2.6](https://github.com/rjlee/actual-investment-sync/compare/v1.2.5...v1.2.6) (2025-11-04)
+
+
+### Bug Fixes
+
+* remove leftover build job ([1a33432](https://github.com/rjlee/actual-investment-sync/commit/1a33432c06f2ec3a91a203c09fc6eb739a6af144))
+
 ## [1.2.5](https://github.com/rjlee/actual-investment-sync/compare/v1.2.4...v1.2.5) (2025-11-04)
 
 
