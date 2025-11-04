@@ -12,11 +12,12 @@ ARG ACTUAL_API_VERSION
 ARG GIT_SHA
 ARG APP_VERSION
 COPY package*.json ./
+ENV HUSKY=0
 RUN if [ -n "$ACTUAL_API_VERSION" ]; then \
       npm pkg set dependencies.@actual-app/api=$ACTUAL_API_VERSION && \
-      npm install --package-lock-only; \
+      npm install --package-lock-only --ignore-scripts; \
     fi && \
-    npm ci --omit=dev
+    npm ci --omit=dev --ignore-scripts
 
 # Copy application source
 COPY . .
