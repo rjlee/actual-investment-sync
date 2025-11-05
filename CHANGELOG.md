@@ -1,3 +1,10 @@
+## [1.2.10](https://github.com/rjlee/actual-investment-sync/compare/v1.2.9...v1.2.10) (2025-11-05)
+
+
+### Bug Fixes
+
+* Updating workflow ([d70b5f6](https://github.com/rjlee/actual-investment-sync/commit/d70b5f697a166944a2e6ee7146b69c8644e07eef))
+
 ## [1.2.9](https://github.com/rjlee/actual-investment-sync/compare/v1.2.8...v1.2.9) (2025-11-05)
 
 
