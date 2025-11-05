@@ -122,19 +122,15 @@ Important: choose a tag that matches your Actual server's `@actual-app/api` vers
 
 - **App releases (semantic‑release):**
   - Manage versioning and changelog in this repo (no separate Docker tags for app versions).
-- **API matrix images (compatibility):**
+- **Docker images (compatibility):**
   - Scope: latest patch of the last three stable `@actual-app/api` majors.
-  - Tags per image: `api-<major>` for each supported major; `latest` points to the highest major.
+  - Tags per image: exact semver plus `latest` (highest stable).
   - Purpose: let you match your Actual server’s API line without changing your app version.
 
 ## Choosing an Image Tag
 
-- **You know your server’s API major (recommended):**
-  - Use the major alias: `api-<MAJOR>` (e.g. `api-25`).
-  - Pull example: `docker pull ghcr.io/rjlee/actual-investment-sync:api-25`
-  - This keeps you on the newest compatible patch for that major.
-- **You want to track the newest supported major:**
-  - Use `latest`.
+- Examples: `ghcr.io/rjlee/actual-investment-sync:25.11.0` (pinned) or `ghcr.io/rjlee/actual-investment-sync:latest`.
+- Always pick a semver tag that matches your Actual server’s `@actual-app/api` version, or use `latest` if you want the newest supported version automatically.
 
 ### Tips
 
