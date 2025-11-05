@@ -111,27 +111,12 @@ npm run release        # create a new release with semantic-release
 
 - Pull latest image: `docker pull ghcr.io/rjlee/actual-investment-sync:latest`
 - Run with env file:
-  - `docker run --rm --env-file .env ghcr.io/rjlee/actual-investment-sync:latest`
+  - Pinned example: `docker run --rm --env-file .env ghcr.io/rjlee/actual-investment-sync:25.11.0`
+  - Latest example: `docker run --rm --env-file .env ghcr.io/rjlee/actual-investment-sync:latest`
 - Persist data by mounting `./data` to `/app/data`
 - Or via compose: `docker-compose up -d`
 
-## API-Versioned Images
-
-Actual Budget's server and `@actual-app/api` should be compatible. This project publishes API‑specific images so you can pick an image that matches your server:
-
-- Major alias: `ghcr.io/rjlee/actual-investment-sync:api-25`
-- Rolling latest (highest supported API major): `ghcr.io/rjlee/actual-investment-sync:latest`
-
-The Dockerfile accepts a build arg `ACTUAL_API_VERSION` and CI publishes images for the latest patch of the last three stable API majors (no nightly/rc/edge). Images include labels:
-
-- `io.actual.api.version` — the `@actual-app/api` version
-- `org.opencontainers.image.revision` — git SHA
-- `org.opencontainers.image.version` — app version
-
-### Examples
-
-- Run with a specific API major: `docker run --rm --env-file .env ghcr.io/rjlee/actual-investment-sync:api-25`
-- Follow the newest supported API major: `docker run --rm --env-file .env ghcr.io/rjlee/actual-investment-sync:latest`
+Important: choose a tag that matches your Actual server's `@actual-app/api` version.
 
 ## Release Strategy
 
@@ -158,5 +143,4 @@ The Dockerfile accepts a build arg `ACTUAL_API_VERSION` and CI publishes images 
 
 ### Compose Defaults
 
-- The provided `docker-compose.yml` uses `api-${ACTUAL_API_MAJOR}` by default; set `ACTUAL_API_MAJOR` in your `.env` (e.g. `25`).
-- Alternatively, use `:latest` to always follow the newest supported API major automatically.
+- Use `ACTUAL_IMAGE_TAG` to pin a semver tag (e.g., `25.11.0`) or leave unset for `latest`.
