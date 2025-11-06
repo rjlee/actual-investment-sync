@@ -1,3 +1,10 @@
+## [1.2.11](https://github.com/rjlee/actual-investment-sync/compare/v1.2.10...v1.2.11) (2025-11-06)
+
+
+### Bug Fixes
+
+* Standardised jest configuration ([9afb2bc](https://github.com/rjlee/actual-investment-sync/commit/9afb2bc429d31799a509a8dd3ebc8963597019a4))
+
 ## [1.2.10](https://github.com/rjlee/actual-investment-sync/compare/v1.2.9...v1.2.10) (2025-11-05)
 
 
