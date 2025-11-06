@@ -1,3 +1,10 @@
+## [1.2.12](https://github.com/rjlee/actual-investment-sync/compare/v1.2.11...v1.2.12) (2025-11-06)
+
+
+### Bug Fixes
+
+* improved signal heandling and structured logging ([90db145](https://github.com/rjlee/actual-investment-sync/commit/90db1452eeb70f10534c7e3ccf91b9a03d6a8f03))
+
 ## [1.2.11](https://github.com/rjlee/actual-investment-sync/compare/v1.2.10...v1.2.11) (2025-11-06)
 
 
