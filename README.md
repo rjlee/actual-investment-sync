@@ -1,19 +1,19 @@
 # actual-investment-sync
 
-Synchronise investment or portfolio balances into Actual Budget. Fetch latest prices from supported providers, aggregate per portfolio, and push adjustment transactions to mapped Actual accounts on a schedule or via the web UI.
+Synchronise investment or portfolio balances into Actual Budget. Fetches prices from supported providers, aggregates per portfolio, and posts adjustment transactions on a schedule or via the Web UI.
 
 ## Features
 
-- Provider-agnostic fetch layer (AlphaVantage, Finnhub, TwelveData; extendable).
-- Web UI to map symbols → portfolios → Actual accounts and trigger manual syncs.
-- Cron-driven daemon with optional debug/headful Puppeteer mode.
-- Docker image with health check and persistent state volume.
+- Provider-agnostic fetch layer (AlphaVantage, Finnhub, TwelveData) with an extensible adapter pattern.
+- Web UI for mapping symbols → portfolios → Actual accounts and triggering manual syncs.
+- Cron-driven daemon with optional headful Puppeteer mode for debugging provider flows.
+- Docker image with baked-in health check and persistent data volume.
 
 ## Requirements
 
-- Node.js ≥ 20.
+- Node.js ≥ 22.
 - Actual Budget server credentials (`ACTUAL_SERVER_URL`, `ACTUAL_PASSWORD`, `ACTUAL_SYNC_ID`).
-- Provider API keys depending on the data source (see `.env.example`).
+- Provider API keys (AlphaVantage, Finnhub, TwelveData) depending on the sources you enable.
 
 ## Installation
 
@@ -23,7 +23,7 @@ cd actual-investment-sync
 npm install
 ```
 
-Optional husky hooks:
+Optional git hooks:
 
 ```bash
 npm run prepare
@@ -41,41 +41,40 @@ docker run -d --env-file .env \
   actual-investment-sync --mode daemon --ui
 ```
 
-Prebuilt images: `ghcr.io/rjlee/actual-investment-sync:<tag>` (see [Image tags](#image-tags)).
+Published images live at `ghcr.io/rjlee/actual-investment-sync:<tag>` (see [Image tags](#image-tags)).
 
 ## Configuration
 
-- `.env` – required Actual credentials, provider API keys, cron overrides, etc.
-- `config.yaml` / `config.yml` / `config.json` – optional defaults (copy from `config.example.yaml`).
+- `.env` – primary configuration, copy from `.env.example`.
+- `config.yaml` / `config.yml` / `config.json` – optional defaults, copy from `config.example.yaml`.
 
 Precedence: CLI flags > environment variables > config file.
 
-Key options:
-
-| Setting                                                              | Description                | Default              |
-| -------------------------------------------------------------------- | -------------------------- | -------------------- |
-| `DATA_DIR`                                                           | App data (mappings, cache) | `./data`             |
-| `BUDGET_DIR`                                                         | Budget cache location      | `./data/budget`      |
-| `SYNC_CRON` / `SYNC_CRON_TIMEZONE`                                   | Cron schedule              | `45 * * * *` / `UTC` |
-| `DISABLE_CRON_SCHEDULING`                                            | Disable cron in daemon     | `false`              |
-| `HTTP_PORT`                                                          | Web UI port                | `3000`               |
-| `ALPHAVANTAGE_API_KEY`, `FINNHUB_API_KEY`, `TWELVEDATA_API_KEY`, ... | Provider credentials       | unset                |
+| Setting                             | Description                                    | Default                      |
+| ----------------------------------- | ---------------------------------------------- | ---------------------------- |
+| `DATA_DIR`                          | Local storage for mappings and cached data     | `./data`                     |
+| `BUDGET_DIR`                        | Budget cache directory                         | `./data/budget`              |
+| `SYNC_CRON` / `SYNC_CRON_TIMEZONE`  | Daemon cron schedule                           | `45 * * * *` / `UTC`         |
+| `DISABLE_CRON_SCHEDULING`           | Disable cron while in daemon mode              | `false`                      |
+| `HTTP_PORT`                         | Enables Web UI when set or `--ui` passed       | `3000`                       |
+| `UI_AUTH_ENABLED`, `SESSION_SECRET` | Session-auth toggle and cookie secret          | `true`, fallback to password |
+| `LOG_LEVEL`                         | Pino log level                                 | `info`                       |
+| `ALPHAVANTAGE_API_KEY`              | API key for AlphaVantage provider              | unset                        |
+| `FINNHUB_API_KEY`                   | API key for Finnhub provider                   | unset                        |
+| `TWELVEDATA_API_KEY`                | API key for TwelveData provider                | unset                        |
+| `ENABLE_NODE_VERSION_SHIM`          | Legacy shim for older `@actual-app/api` checks | `false`                      |
 
 ## Usage
 
-### Local
+### CLI modes
 
-```bash
-# One-off sync
-npm run sync
+- One-off sync: `npm run sync`
+- Daemon with UI: `npm run daemon -- --ui --http-port 3000`
+- Disable cron in daemon: `DISABLE_CRON_SCHEDULING=true npm run daemon`
 
-# Daemon (cron + web UI)
-npm run daemon -- --ui --http-port 3000
-```
+Visit `http://localhost:3000` (or your configured port) to map portfolios, update credentials, and trigger manual syncs.
 
-Open `http://localhost:3000` (or your configured port) to map accounts and trigger manual syncs.
-
-### Docker
+### Docker daemon
 
 ```bash
 docker run --rm --env-file .env \
@@ -96,14 +95,10 @@ npm run format:check
 
 ## Image tags
 
-- `ghcr.io/rjlee/actual-investment-sync:<semver>` – pinned API version (match your Actual server).
-- `ghcr.io/rjlee/actual-investment-sync:latest` – highest supported API release.
+- `ghcr.io/rjlee/actual-investment-sync:<semver>` – pinned to a specific `@actual-app/api` release.
+- `ghcr.io/rjlee/actual-investment-sync:latest` – highest supported API version.
 
-## Security considerations
-
-- Web UI authentication is enabled by default (`UI_AUTH_ENABLED=true`). Set a strong `SESSION_SECRET` (defaults to `ACTUAL_PASSWORD`).
-- Serve over HTTPS by providing `SSL_KEY`/`SSL_CERT`.
-- Disable the UI (`UI_AUTH_ENABLED=false` and omit `--ui`) once mappings are stable if you prefer headless operation.
+See [rjlee/actual-auto-ci](https://github.com/rjlee/actual-auto-ci) for tagging policy and automation details.
 
 ## License
 
