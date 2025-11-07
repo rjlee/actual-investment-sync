@@ -26,7 +26,7 @@ async function getBudgetName() {
         if (first) return first.name;
       }
     }
-  } catch (_) {
+  } catch {
     // ignore API errors
   }
   return null;

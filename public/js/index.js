@@ -18,7 +18,6 @@
 
   async function pollBudget() {
     // intentionally loop until budget is ready
-    // eslint-disable-next-line no-constant-condition
     while (true) {
       try {
         const res = await fetch('/api/budget-status');
@@ -34,7 +33,6 @@
         budgetEl.textContent = 'Budget downloading';
         budgetEl.className = 'badge bg-info';
       }
-      // eslint-disable-next-line no-await-in-loop
       await new Promise((r) => setTimeout(r, 1000));
     }
     await loadData();
