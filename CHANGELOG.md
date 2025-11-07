@@ -1,3 +1,33 @@
+# 1.0.0 (2025-11-07)
+
+
+### Bug Fixes
+
+* add actual-api versioned builds ([f044963](https://github.com/rjlee/actual-investment-sync/commit/f0449632d6803e95821e1fd9ed582d2143466c2f))
+* adopt new workflow ([9b70d8c](https://github.com/rjlee/actual-investment-sync/commit/9b70d8c9f6a47c3a48a08e81394749233f7a90b9))
+* adopt reusable workflows; gate release on CI; nightly Docker build; add GHCR cleanup; harden Dockerfile ([0110f5f](https://github.com/rjlee/actual-investment-sync/commit/0110f5f22db0be5701bbc10b62587f3d8e1e267f))
+* amend cron schedule ([cbf1c84](https://github.com/rjlee/actual-investment-sync/commit/cbf1c84b78e29a75616464b9e4fd3efc9d0e9502))
+* correct service name and container name in docker-compose configuration ([dab9b68](https://github.com/rjlee/actual-investment-sync/commit/dab9b68703ea4c456e63042ee3f0efe51b8d95be))
+* FIx build requirements in Dockerfile ([d8f6905](https://github.com/rjlee/actual-investment-sync/commit/d8f69053684ebea10aaab679fdb18febe9fa6be6))
+* fix formatting ([f19dd5d](https://github.com/rjlee/actual-investment-sync/commit/f19dd5d2bb938e8d1e373bdcf427d8fb5438e89e))
+* improved signal heandling and structured logging ([90db145](https://github.com/rjlee/actual-investment-sync/commit/90db1452eeb70f10534c7e3ccf91b9a03d6a8f03))
+* **lint:** remove unused catch params ([81bc53f](https://github.com/rjlee/actual-investment-sync/commit/81bc53f393208314dfb1e201021c2309ac7ca747))
+* remove leftover build job ([1a33432](https://github.com/rjlee/actual-investment-sync/commit/1a33432c06f2ec3a91a203c09fc6eb739a6af144))
+* Standardised jest configuration ([9afb2bc](https://github.com/rjlee/actual-investment-sync/commit/9afb2bc429d31799a509a8dd3ebc8963597019a4))
+* support actual api version specification in docker compose file ([582a6a4](https://github.com/rjlee/actual-investment-sync/commit/582a6a415b249757338310b06a58e5e27b5f0e48))
+* update environment variable from ACTUAL_BUDGET_ID to ACTUAL_SYNC_ID in configuration and documentation ([5f152c5](https://github.com/rjlee/actual-investment-sync/commit/5f152c5a4e4b227f03abc1d07a7077fb8fce249d))
+* Update to reflect new workflow ([5e62106](https://github.com/rjlee/actual-investment-sync/commit/5e6210659aeb3744a5db545ac13a053789d277c2))
+* updating actual-api version ([16b6a2f](https://github.com/rjlee/actual-investment-sync/commit/16b6a2f25f7b44212c3513817bfce22708160ddf))
+* Updating workflow ([d70b5f6](https://github.com/rjlee/actual-investment-sync/commit/d70b5f697a166944a2e6ee7146b69c8644e07eef))
+
+
+### Features
+
+* add semantic-release configuration for automated versioning and changelog updates ([4496b17](https://github.com/rjlee/actual-investment-sync/commit/4496b17b8293948388070c400775924809177725))
+* enhance budget status API to include budget name and update UI feedback ([20d615c](https://github.com/rjlee/actual-investment-sync/commit/20d615c26c56507fc84ee69c1b8d9f4cb6312fbb))
+* enhance project configuration and improve code readability ([08c3160](https://github.com/rjlee/actual-investment-sync/commit/08c3160bceac1e8bbb2eb8ed9c1182abf7d21fef))
+* refactor getBudgetName to use API for budget retrieval and update budget-status endpoint ([7a962e7](https://github.com/rjlee/actual-investment-sync/commit/7a962e796a5848aa709ce4d08254576ec7ac772c))
+
 ## [1.2.12](https://github.com/rjlee/actual-investment-sync/compare/v1.2.11...v1.2.12) (2025-11-06)
 
 
