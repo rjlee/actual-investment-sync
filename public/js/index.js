@@ -1,6 +1,7 @@
 /* eslint-env browser */
 // Dynamic UI for managing stocks, portfolios, and syncing values
 (async function () {
+  const basePath = window.location.pathname.replace(/\/$/, '');
   const budgetEl = document.getElementById('budgetStatus');
   const statusEl = document.getElementById('status');
 
@@ -20,7 +21,7 @@
     // intentionally loop until budget is ready
     while (true) {
       try {
-        const res = await fetch('/api/budget-status');
+        const res = await fetch(`${basePath}/api/budget-status`);
         const { ready, name } = await res.json();
         if (ready) {
           budgetEl.textContent = `${name ? name + ' - ' : ''}Budget downloaded`;
@@ -40,7 +41,7 @@
 
   async function loadData() {
     try {
-      const res = await fetch('/api/data');
+      const res = await fetch(`${basePath}/api/data`);
       const json = await res.json();
       stocksConfig = Array.isArray(json.stocks) ? json.stocks : [];
       portfoliosConfig = Array.isArray(json.portfolios) ? json.portfolios : [];
@@ -271,7 +272,7 @@
   document.getElementById('saveBtn').onclick = async () => {
     statusEl.textContent = 'Saving configuration...';
     try {
-      const res = await fetch('/api/mappings', {
+      const res = await fetch(`${basePath}/api/mappings`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ stocks: stocksConfig, portfolios: portfoliosConfig }),
@@ -289,7 +290,7 @@
     const btn = document.getElementById('syncBtn');
     btn.disabled = true;
     try {
-      const res = await fetch('/api/sync', { method: 'POST' });
+      const res = await fetch(`${basePath}/api/sync`, { method: 'POST' });
       const data = await res.json();
       statusEl.textContent = 'Synced ' + data.count + ' portfolio(s)';
     } catch (err) {
