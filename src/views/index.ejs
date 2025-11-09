@@ -3,8 +3,8 @@
   <h1 class="text-center mb-4">actual-investment-sync</h1>
   <div class="position-relative mb-4">
     <span id="budgetStatus" class="badge bg-info position-absolute start-50 translate-middle-x">Budget downloading</span>
-    <% if (uiAuthEnabled) { %>
-    <form method="post" action="/logout" class="position-absolute end-0 top-0 m-0">
+    <% if (showLogoutButton) { %>
+    <form method="post" action="/auth/logout" class="position-absolute end-0 top-0 m-0">
       <button type="submit" class="btn btn-warning">Logout</button>
     </form>
     <% } %>

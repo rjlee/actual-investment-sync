@@ -25,7 +25,6 @@
     "@actual-app/api": "^25.11.0",
     "axios": "^1.5.0",
     "cheerio": "^1.0.0-rc.12",
-    "cookie-session": "^2.0.0",
     "dotenv": "^16.5.0",
     "ejs": "^3.1.9",
     "ejs-lint": "^2.0.1",

@@ -5,7 +5,7 @@ Synchronise investment or portfolio balances into Actual Budget. Fetches prices 
 ## Features
 
 - Provider-agnostic fetch layer (AlphaVantage, Finnhub, TwelveData) with an extensible adapter pattern.
-- Web UI for mapping symbols → portfolios → Actual accounts and triggering manual syncs.
+- Web UI for mapping symbols → portfolios → Actual accounts and triggering manual syncs, designed to sit behind a shared forward-auth proxy such as `actual-auto-auth`.
 - Cron-driven daemon with optional headful Puppeteer mode for debugging provider flows.
 - Docker image with baked-in health check and persistent data volume.
 
@@ -50,19 +50,19 @@ Published images live at `ghcr.io/rjlee/actual-investment-sync:<tag>` (see [Imag
 
 Precedence: CLI flags > environment variables > config file.
 
-| Setting                             | Description                                    | Default                      |
-| ----------------------------------- | ---------------------------------------------- | ---------------------------- |
-| `DATA_DIR`                          | Local storage for mappings and cached data     | `./data`                     |
-| `BUDGET_DIR`                        | Budget cache directory                         | `./data/budget`              |
-| `SYNC_CRON` / `SYNC_CRON_TIMEZONE`  | Daemon cron schedule                           | `45 * * * *` / `UTC`         |
-| `DISABLE_CRON_SCHEDULING`           | Disable cron while in daemon mode              | `false`                      |
-| `HTTP_PORT`                         | Enables Web UI when set or `--ui` passed       | `3000`                       |
-| `UI_AUTH_ENABLED`, `SESSION_SECRET` | Session-auth toggle and cookie secret          | `true`, fallback to password |
-| `LOG_LEVEL`                         | Pino log level                                 | `info`                       |
-| `ALPHAVANTAGE_API_KEY`              | API key for AlphaVantage provider              | unset                        |
-| `FINNHUB_API_KEY`                   | API key for Finnhub provider                   | unset                        |
-| `TWELVEDATA_API_KEY`                | API key for TwelveData provider                | unset                        |
-| `ENABLE_NODE_VERSION_SHIM`          | Legacy shim for older `@actual-app/api` checks | `false`                      |
+| Setting                            | Description                                    | Default              |
+| ---------------------------------- | ---------------------------------------------- | -------------------- |
+| `DATA_DIR`                         | Local storage for mappings and cached data     | `./data`             |
+| `BUDGET_DIR`                       | Budget cache directory                         | `./data/budget`      |
+| `SYNC_CRON` / `SYNC_CRON_TIMEZONE` | Daemon cron schedule                           | `45 * * * *` / `UTC` |
+| `DISABLE_CRON_SCHEDULING`          | Disable cron while in daemon mode              | `false`              |
+| `HTTP_PORT`                        | Enables Web UI when set or `--ui` passed       | `3000`               |
+| `AUTH_COOKIE_NAME`                 | Cookie name forwarded by Traefik for logout UI | `actual-auth`        |
+| `LOG_LEVEL`                        | Pino log level                                 | `info`               |
+| `ALPHAVANTAGE_API_KEY`             | API key for AlphaVantage provider              | unset                |
+| `FINNHUB_API_KEY`                  | API key for Finnhub provider                   | unset                |
+| `TWELVEDATA_API_KEY`               | API key for TwelveData provider                | unset                |
+| `ENABLE_NODE_VERSION_SHIM`         | Legacy shim for older `@actual-app/api` checks | `false`              |
 
 ## Usage
 
@@ -72,7 +72,7 @@ Precedence: CLI flags > environment variables > config file.
 - Daemon with UI: `npm run daemon -- --ui --http-port 3000`
 - Disable cron in daemon: `DISABLE_CRON_SCHEDULING=true npm run daemon`
 
-Visit `http://localhost:3000` (or your configured port) to map portfolios, update credentials, and trigger manual syncs.
+Visit `http://localhost:3000` (or your configured port) to map portfolios, update credentials, and trigger manual syncs. In production, place the UI behind a forward-auth proxy (for example the shared `actual-auto-auth` service) so access is password protected.
 
 ### Docker daemon
 

@@ -4,7 +4,6 @@ const path = require('path');
 const ejs = require('ejs');
 const fs = require('fs');
 const https = require('https');
-const cookieSession = require('cookie-session');
 const logger = require('./logger');
 const config = require('./config');
 const api = require('@actual-app/api');
@@ -32,15 +31,26 @@ async function getBudgetName() {
   return null;
 }
 
+const DEFAULT_COOKIE_NAME = 'actual-auth';
+
+function hasAuthCookie(req) {
+  const cookieName = process.env.AUTH_COOKIE_NAME?.trim() || DEFAULT_COOKIE_NAME;
+  const cookieHeader = req.headers?.cookie || '';
+  return cookieHeader
+    .split(';')
+    .map((part) => part.trim())
+    .some((part) => part.startsWith(`${cookieName}=`));
+}
+
 /**
- * Generate the HTML for the UI page via EJS template
+ * Generate the HTML for the UI page via EJS template.
  */
-function uiPageHtml(uiAuthEnabled) {
+function uiPageHtml({ showLogoutButton }) {
   const templatePath = path.join(__dirname, 'views', 'index.ejs');
   const template = fs.readFileSync(templatePath, 'utf8');
   return ejs.render(
     template,
-    { uiAuthEnabled, title: 'actual-investment-sync' },
+    { showLogoutButton, title: 'actual-investment-sync' },
     { filename: templatePath }
   );
 }
@@ -73,54 +83,6 @@ async function startWebUi(httpPort, verbose) {
     });
   }
 
-  const UI_AUTH_ENABLED = process.env.UI_AUTH_ENABLED !== 'false';
-  if (UI_AUTH_ENABLED) {
-    const SECRET = process.env.ACTUAL_PASSWORD;
-    if (!SECRET) {
-      logger.error('ACTUAL_PASSWORD must be set to enable UI authentication');
-      process.exit(1);
-    }
-    app.use(express.urlencoded({ extended: false }));
-    app.use(
-      cookieSession({
-        name: 'session',
-        keys: [process.env.SESSION_SECRET || SECRET],
-        maxAge: 24 * 60 * 60 * 1000,
-        httpOnly: true,
-        secure: Boolean(process.env.SSL_KEY && process.env.SSL_CERT),
-        sameSite: 'strict',
-      })
-    );
-
-    const LOGIN_PATH = '/login';
-    const loginForm = (error) => {
-      const templatePath = path.join(__dirname, 'views', 'login.ejs');
-      const template = fs.readFileSync(templatePath, 'utf8');
-      return ejs.render(template, { error, LOGIN_PATH }, { filename: templatePath });
-    };
-
-    app.get(LOGIN_PATH, (_req, res) => res.send(loginForm()));
-    app.post(LOGIN_PATH, (req, res) => {
-      if (req.body.password === SECRET) {
-        req.session.authenticated = true;
-        return res.redirect(req.query.next || '/');
-      }
-      return res.status(401).send(loginForm('Invalid password'));
-    });
-
-    app.use((req, res, next) => {
-      if (req.session.authenticated) {
-        return next();
-      }
-      return res.send(loginForm());
-    });
-
-    app.post('/logout', (req, res) => {
-      req.session = null;
-      res.redirect(LOGIN_PATH);
-    });
-  }
-
   app.use((req, res, next) => {
     const meta = { method: req.method, url: req.url };
     if (verbose) {
@@ -137,13 +99,17 @@ async function startWebUi(httpPort, verbose) {
 
   app.get(
     '/',
-    asyncHandler(async (_req, res) => {
+    asyncHandler(async (req, res) => {
       try {
         await openBudget();
       } catch (err) {
         logger.error({ err }, 'Budget download/sync on page load failed');
       }
-      res.send(uiPageHtml(UI_AUTH_ENABLED));
+      res.send(
+        uiPageHtml({
+          showLogoutButton: hasAuthCookie(req),
+        })
+      );
     })
   );
 
