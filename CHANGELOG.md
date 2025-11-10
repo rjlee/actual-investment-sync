@@ -1,3 +1,10 @@
+# [1.1.0](https://github.com/rjlee/actual-investment-sync/compare/v1.0.0...v1.1.0) (2025-11-10)
+
+
+### Features
+
+* add auth-enabled compose sample ([0158c0a](https://github.com/rjlee/actual-investment-sync/commit/0158c0af9de90f644820000ddfb838439c87be81))
+
 # 1.0.0 (2025-11-07)
 
 
