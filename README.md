@@ -43,6 +43,15 @@ docker run -d --env-file .env \
 
 Published images live at `ghcr.io/rjlee/actual-investment-sync:<tag>` (see [Image tags](#image-tags)).
 
+Prefer Docker Compose? Two samples are included:
+
+- `docker-compose.yml` – exposes the Web UI directly on `HTTP_PORT`.
+- `docker-compose.with-auth.yml.example` – bundles Traefik plus
+  [`actual-auto-auth`](https://github.com/rjlee/actual-auto-auth) so the UI is
+  protected by the shared password prompt; copy it to `docker-compose.yml`,
+  adjust `AUTH_APP_NAME` / `AUTH_COOKIE_NAME`, and ensure `ACTUAL_PASSWORD` is
+  provided so the auth sidecar can sign cookies.
+
 ## Configuration
 
 - `.env` – primary configuration, copy from `.env.example`.

@@ -1,0 +1,80 @@
+version: '3.8'
+
+services:
+  traefik:
+    image: traefik:2.11
+    container_name: actual-investment-sync-traefik
+    command:
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
+    ports:
+      - '${HTTP_PORT:-3000}:80'
+    networks:
+      - investments
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - actual-investment-sync
+      - actual-auto-auth
+
+  actual-auto-auth:
+    image: ${AUTH_FORWARD_IMAGE:-ghcr.io/rjlee/actual-auto-auth:latest}
+    pull_policy: always
+    container_name: actual-investment-sync-auth
+    environment:
+      ACTUAL_PASSWORD: ${ACTUAL_PASSWORD:?ACTUAL_PASSWORD must be set}
+      AUTH_APP_NAME: ${AUTH_APP_NAME:-Actual Investment Sync}
+      AUTH_COOKIE_NAME: ${AUTH_COOKIE_NAME:-investment-auth}
+      PORT: 4000
+    networks:
+      - investments
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.investment-auth.rule=PathPrefix(`/auth`)
+      - traefik.http.routers.investment-auth.entrypoints=web
+      - traefik.http.routers.investment-auth.priority=100
+      - traefik.http.services.investment-auth.loadbalancer.server.port=4000
+      - traefik.http.middlewares.investment-forward.forwardauth.address=http://actual-investment-sync-auth:4000/check
+      - traefik.http.middlewares.investment-forward.forwardauth.trustForwardHeader=true
+      - traefik.http.middlewares.investment-forward.forwardauth.authResponseHeaders=Set-Cookie
+      - 'traefik.http.middlewares.investment-forward.forwardauth.authRequestHeaders=X-Actual-App-Name,X-Actual-Cookie-Name,X-Forwarded-Host,X-Forwarded-Proto,Cookie'
+
+  actual-investment-sync:
+    image: ghcr.io/rjlee/actual-investment-sync:${ACTUAL_IMAGE_TAG:-latest}
+    container_name: actual-investment-sync
+    env_file:
+      - .env
+    command: ['--mode', 'daemon', '--ui', '--http-port', '${HTTP_PORT:-3000}']
+    environment:
+      AUTH_COOKIE_NAME: ${AUTH_COOKIE_NAME:-investment-auth}
+    restart: unless-stopped
+    depends_on:
+      - actual-auto-auth
+    networks:
+      - investments
+    volumes:
+      - type: bind
+        source: ./data
+        target: /app/data
+      - type: bind
+        source: ./data/budget
+        target: /app/budget
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.investment.rule=PathPrefix(`/`) && !PathPrefix(`/auth`)
+      - traefik.http.routers.investment.entrypoints=web
+      - traefik.http.routers.investment.middlewares=investment-chain@docker
+      - traefik.http.services.investment.loadbalancer.server.port=${HTTP_PORT:-3000}
+      - traefik.http.middlewares.investment-headers.headers.customrequestheaders.X-Actual-App-Name=${AUTH_APP_NAME:-Actual Investment Sync}
+      - traefik.http.middlewares.investment-headers.headers.customrequestheaders.X-Actual-Cookie-Name=${AUTH_COOKIE_NAME:-investment-auth}
+      - traefik.http.middlewares.investment-chain.chain.middlewares=investment-headers@docker,investment-forward@docker
+
+networks:
+  investments:
+    driver: bridge
