@@ -8,6 +8,7 @@ Synchronise investment or portfolio balances into Actual Budget. Fetches prices 
 - Web UI for mapping symbols → portfolios → Actual accounts and triggering manual syncs, designed to sit behind a shared forward-auth proxy such as `actual-auto-auth`.
 - Cron-driven daemon with optional headful Puppeteer mode for debugging provider flows.
 - Docker image with baked-in health check and persistent data volume.
+- CSV export (positions or holdings aggregated by stock) for loading snapshots into spreadsheets such as Google Sheets.
 
 ## Requirements
 

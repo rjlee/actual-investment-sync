@@ -9,6 +9,7 @@ const config = require('./config');
 const api = require('@actual-app/api');
 const { openBudget } = require('./utils');
 const { runSync } = require('./sync');
+const { generateExportCsv } = require('./exporter');
 
 // Helper to wrap async route handlers and forward errors to the global error handler
 const asyncHandler = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
@@ -156,6 +157,37 @@ async function startWebUi(httpPort, verbose) {
     asyncHandler(async (_req, res) => {
       const count = await runSync({ verbose: false, useLogger: true });
       res.json({ count });
+    })
+  );
+
+  app.get(
+    '/api/export',
+    asyncHandler(async (req, res) => {
+      let mapping = { stocks: [], portfolios: [] };
+      try {
+        mapping = JSON.parse(fs.readFileSync(mappingPath, 'utf8'));
+      } catch {
+        // empty mapping fallback
+      }
+
+      let accountsList = [];
+      try {
+        accountsList = await api.getAccounts();
+      } catch (err) {
+        logger.error({ err }, 'Failed to fetch Actual Budget accounts for export');
+      }
+
+      const format = String(req.query.format || 'positions').toLowerCase();
+      if (!['positions', 'holdings'].includes(format)) {
+        res.status(400).json({ error: 'Invalid export format' });
+        return;
+      }
+
+      const csv = await generateExportCsv(format, mapping, accountsList);
+      const filename = `portfolio-${format}-${Date.now()}.csv`;
+      res.setHeader('Content-Type', 'text/csv');
+      res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
+      res.send(csv);
     })
   );
 

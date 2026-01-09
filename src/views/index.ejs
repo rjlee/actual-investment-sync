@@ -21,9 +21,17 @@
     <button id="addPortfolioBtn" class="btn btn-secondary">Add Portfolio</button>
   </div>
 
-  <div class="d-flex align-items-center gap-2">
+  <div class="d-flex align-items-center gap-2 flex-wrap">
     <button id="saveBtn" class="btn btn-primary">Save Portfolios</button>
     <button id="syncBtn" class="btn btn-success">Sync Now</button>
+    <div class="d-flex align-items-center gap-2">
+      <label class="form-label m-0" for="exportFormat">Export:</label>
+      <select id="exportFormat" class="form-select form-select-sm w-auto">
+        <option value="positions">Positions (per holding)</option>
+        <option value="holdings">Holdings by Stock</option>
+      </select>
+      <button id="exportBtn" class="btn btn-outline-primary btn-sm">Export CSV</button>
+    </div>
     <span id="status"></span>
   </div>
 </div>

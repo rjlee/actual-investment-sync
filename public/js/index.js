@@ -4,6 +4,8 @@
   const basePath = window.location.pathname.replace(/\/$/, '');
   const budgetEl = document.getElementById('budgetStatus');
   const statusEl = document.getElementById('status');
+  const exportFormatEl = document.getElementById('exportFormat');
+  const exportBtn = document.getElementById('exportBtn');
 
   let stocksConfig = [];
   let portfoliosConfig = [];
@@ -299,6 +301,13 @@
       btn.disabled = false;
     }
   };
+
+  if (exportBtn) {
+    exportBtn.onclick = () => {
+      const format = exportFormatEl?.value || 'positions';
+      window.location.assign(`${basePath}/api/export?format=${encodeURIComponent(format)}`);
+    };
+  }
 
   // Initialize UI
   pollBudget();
