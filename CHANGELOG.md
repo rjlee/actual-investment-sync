@@ -1,3 +1,10 @@
+# [1.2.0](https://github.com/rjlee/actual-investment-sync/compare/v1.1.0...v1.2.0) (2026-01-09)
+
+
+### Features
+
+* add CSV exports ([4fc2b37](https://github.com/rjlee/actual-investment-sync/commit/4fc2b37f6e3adf2f1f7e8548b79073ec64b3c295))
+
 # [1.1.0](https://github.com/rjlee/actual-investment-sync/compare/v1.0.0...v1.1.0) (2025-11-10)
 
 
