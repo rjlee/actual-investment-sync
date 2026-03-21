@@ -1,3 +1,15 @@
+# [1.3.0](https://github.com/rjlee/actual-investment-sync/compare/v1.2.0...v1.3.0) (2026-03-21)
+
+
+### Bug Fixes
+
+* resolve lint errors for ESLint 9 compatibility ([cfd326e](https://github.com/rjlee/actual-investment-sync/commit/cfd326e8baa2474d650b7f482ad1d2fe3d715861))
+
+
+### Features
+
+* add bearer token auth for API endpoints ([47df1fd](https://github.com/rjlee/actual-investment-sync/commit/47df1fdaa4f00c73c5ab014834f96906204f968c))
+
 # [1.2.0](https://github.com/rjlee/actual-investment-sync/compare/v1.1.0...v1.2.0) (2026-01-09)
 
 
