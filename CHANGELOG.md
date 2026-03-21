@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/rjlee/actual-investment-sync/compare/v1.3.0...v1.4.0) (2026-03-21)
+
+
+### Features
+
+* add JSON export endpoints for positions and holdings ([bb8b197](https://github.com/rjlee/actual-investment-sync/commit/bb8b19731a67e9755e064e6aa8e1fee3352313c5))
+
 # [1.3.0](https://github.com/rjlee/actual-investment-sync/compare/v1.2.0...v1.3.0) (2026-03-21)
 
 
