@@ -15,7 +15,9 @@ function loadConfig() {
       try {
         return file.endsWith('.json') ? JSON.parse(raw) : yaml.load(raw);
       } catch (err) {
-        throw new Error(`Failed to parse configuration file ${file}: ${err.message}`, { cause: err });
+        throw new Error(`Failed to parse configuration file ${file}: ${err.message}`, {
+          cause: err,
+        });
       }
     }
   }
