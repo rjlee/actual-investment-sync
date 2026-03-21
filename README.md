@@ -73,6 +73,7 @@ Precedence: CLI flags > environment variables > config file.
 | `FINNHUB_API_KEY`                  | API key for Finnhub provider                   | unset                |
 | `TWELVEDATA_API_KEY`               | API key for TwelveData provider                | unset                |
 | `ENABLE_NODE_VERSION_SHIM`         | Legacy shim for older `@actual-app/api` checks | `false`              |
+| `INVESTMENT_API_TOKEN`             | Bearer token for API authentication            | unset (disabled)     |
 
 ## Usage
 
@@ -83,6 +84,37 @@ Precedence: CLI flags > environment variables > config file.
 - Disable cron in daemon: `DISABLE_CRON_SCHEDULING=true npm run daemon`
 
 Visit `http://localhost:3000` (or your configured port) to map portfolios, update credentials, and trigger manual syncs. In production, place the UI behind a forward-auth proxy (for example the shared `actual-auto-auth` service) so access is password protected.
+
+### API Endpoints
+
+The Web UI server exposes REST endpoints under `/api/`:
+
+| Endpoint             | Method | Description                               |
+| -------------------- | ------ | ----------------------------------------- |
+| `/api/data`          | GET    | Returns stocks, portfolios, accounts      |
+| `/api/budget-status` | GET    | Returns budget download status            |
+| `/api/mappings`      | POST   | Saves stock/portfolio mappings            |
+| `/api/sync`          | POST   | Triggers a sync operation                 |
+| `/api/export`        | GET    | Downloads CSV export (positions/holdings) |
+
+#### API Authentication
+
+API endpoints support optional bearer token authentication. Set the `INVESTMENT_API_TOKEN` environment variable to enable:
+
+```bash
+INVESTMENT_API_TOKEN=your-secret-token
+```
+
+Bearer token auth is required for these endpoints:
+
+- `/api/data` - Returns stocks, portfolios, accounts
+- `/api/export` - Downloads CSV export
+
+```bash
+curl -H "Authorization: Bearer your-secret-token" http://localhost:3000/api/data
+```
+
+If `INVESTMENT_API_TOKEN` is not set, `/api/data` and `/api/export` are publicly accessible.
 
 ### Docker daemon
 

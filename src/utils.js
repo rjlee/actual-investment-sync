@@ -1,4 +1,3 @@
-require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
 const api = require('@actual-app/api');
@@ -52,7 +51,6 @@ async function openBudget() {
 }
 
 async function closeBudget() {
-  // Reset flag so reopen re-downloads budget/prefs
   hasDownloadedBudget = false;
   try {
     await api.shutdown();
@@ -60,8 +58,7 @@ async function closeBudget() {
       await api.resetBudgetCache();
     }
   } catch (err) {
-    logger.error(err);
-    process.exit(1);
+    logger.error({ err }, 'shutdown failed');
   }
 }
 

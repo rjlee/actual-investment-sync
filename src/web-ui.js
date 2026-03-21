@@ -10,6 +10,7 @@ const api = require('@actual-app/api');
 const { openBudget } = require('./utils');
 const { runSync } = require('./sync');
 const { generateExportCsv } = require('./exporter');
+const { authorizeHeader } = require('./security');
 
 // Helper to wrap async route handlers and forward errors to the global error handler
 const asyncHandler = (fn) => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
@@ -41,6 +42,23 @@ function hasAuthCookie(req) {
     .split(';')
     .map((part) => part.trim())
     .some((part) => part.startsWith(`${cookieName}=`));
+}
+
+const API_TOKEN_ENDPOINTS = ['/api/data', '/api/export'];
+
+function requireApiToken(req, res, next) {
+  const apiToken = process.env.INVESTMENT_API_TOKEN;
+  if (!apiToken) return next();
+
+  if (!API_TOKEN_ENDPOINTS.some((ep) => req.path.startsWith(ep))) {
+    return next();
+  }
+
+  const authHeader = req.headers['authorization'];
+  if (!authorizeHeader(authHeader, apiToken)) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  next();
 }
 
 /**
@@ -87,13 +105,23 @@ async function startWebUi(httpPort, verbose) {
   app.use((req, res, next) => {
     const meta = { method: req.method, url: req.url };
     if (verbose) {
-      meta.headers = req.headers;
+      const redactedHeaders = { ...req.headers };
+      const sensitiveHeaders = ['authorization', 'cookie', 'x-api-key'];
+      for (const header of sensitiveHeaders) {
+        if (redactedHeaders[header]) {
+          redactedHeaders[header] = '[REDACTED]';
+        }
+      }
+      meta.headers = redactedHeaders;
       meta.query = req.query;
       if (req.body) meta.body = req.body;
     }
     logger.info(meta, 'HTTP request');
     next();
   });
+
+  app.use('/api', requireApiToken);
+
   const dataDir = process.env.DATA_DIR || config.DATA_DIR || 'data';
   const absoluteDataDir = path.isAbsolute(dataDir) ? dataDir : path.join(process.cwd(), dataDir);
   const mappingPath = path.join(absoluteDataDir, 'mapping.json');
@@ -147,10 +175,13 @@ async function startWebUi(httpPort, verbose) {
     })
   );
 
-  app.post('/api/mappings', (req, res) => {
-    fs.writeFileSync(mappingPath, JSON.stringify(req.body, null, 2));
-    res.json({ success: true });
-  });
+  app.post(
+    '/api/mappings',
+    asyncHandler(async (req, res) => {
+      fs.writeFileSync(mappingPath, JSON.stringify(req.body, null, 2));
+      res.json({ success: true });
+    })
+  );
 
   app.post(
     '/api/sync',
