@@ -1,4 +1,3 @@
-/* eslint-env browser */
 // Dynamic UI for managing stocks, portfolios, and syncing values
 (async function () {
   const basePath = window.location.pathname.replace(/\/$/, '');
