@@ -241,10 +241,81 @@ async function generateExportCsv(format, mapping, accounts) {
   throw new Error(`Unsupported export format: ${format}`);
 }
 
+function formatPositionsJson(snapshots, accounts) {
+  const accountNames = {};
+  for (const account of accounts || []) {
+    if (account?.id) {
+      accountNames[account.id] = account.name || '';
+    }
+  }
+  const rows = [];
+  for (const snapshot of snapshots || []) {
+    const baseRow = {
+      portfolio: snapshot.name || '',
+      actualAccountName: accountNames[snapshot.accountId] || '',
+      actualAccountId: snapshot.accountId || '',
+      portfolioCash: snapshot.cash,
+      portfolioValue: snapshot.totalValue,
+    };
+    for (const holding of snapshot.stocks || []) {
+      const weight = snapshot.totalValue ? (holding.marketValue / snapshot.totalValue) * 100 : null;
+      rows.push({
+        ...baseRow,
+        assetType: 'Position',
+        holdingName: holding.name,
+        symbol: holding.symbol,
+        provider: holding.provider || 'ft',
+        quantity: holding.quantity,
+        unitPrice: holding.price,
+        marketValue: holding.marketValue,
+        weightPct: weight,
+      });
+    }
+    rows.push({
+      ...baseRow,
+      assetType: 'Cash',
+      holdingName: 'Cash Balance',
+      symbol: '',
+      provider: '',
+      quantity: null,
+      unitPrice: null,
+      marketValue: snapshot.cash,
+      weightPct:
+        snapshot.totalValue && snapshot.totalValue !== 0
+          ? (snapshot.cash / snapshot.totalValue) * 100
+          : null,
+    });
+  }
+  return rows;
+}
+
+function formatHoldingsJson(snapshots) {
+  const aggregate = {};
+  for (const snapshot of snapshots || []) {
+    for (const holding of snapshot.stocks || []) {
+      if (!aggregate[holding.name]) {
+        aggregate[holding.name] = {
+          holdingName: holding.name,
+          symbol: holding.symbol,
+          provider: holding.provider || 'ft',
+          totalQuantity: 0,
+          unitPrice: holding.price,
+          totalMarketValue: 0,
+        };
+      }
+      aggregate[holding.name].totalQuantity += holding.quantity;
+      aggregate[holding.name].totalMarketValue += holding.marketValue;
+    }
+  }
+  return Object.values(aggregate);
+}
+
 module.exports = {
   buildStocksLookup,
   buildPortfolioSnapshots,
   formatPositionsCsv,
   formatHoldingsCsv,
   generateExportCsv,
+  formatPositionsJson,
+  formatHoldingsJson,
 };

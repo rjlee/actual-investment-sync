@@ -9,7 +9,7 @@ const config = require('./config');
 const api = require('@actual-app/api');
 const { openBudget } = require('./utils');
 const { runSync } = require('./sync');
-const { generateExportCsv } = require('./exporter');
+const { generateExportCsv, formatPositionsJson, formatHoldingsJson } = require('./exporter');
 const { authorizeHeader } = require('./security');
 
 // Helper to wrap async route handlers and forward errors to the global error handler
@@ -44,7 +44,12 @@ function hasAuthCookie(req) {
     .some((part) => part.startsWith(`${cookieName}=`));
 }
 
-const API_TOKEN_ENDPOINTS = ['/api/data', '/api/export'];
+const API_TOKEN_ENDPOINTS = [
+  '/api/data',
+  '/api/export',
+  '/api/export/positions',
+  '/api/export/holdings',
+];
 
 function requireApiToken(req, res, next) {
   const apiToken = process.env.INVESTMENT_API_TOKEN;
@@ -219,6 +224,49 @@ async function startWebUi(httpPort, verbose) {
       res.setHeader('Content-Type', 'text/csv');
       res.setHeader('Content-Disposition', `attachment; filename="${filename}"`);
       res.send(csv);
+    })
+  );
+
+  app.get(
+    '/api/export/positions',
+    asyncHandler(async (_req, res) => {
+      let mapping = { stocks: [], portfolios: [] };
+      try {
+        mapping = JSON.parse(fs.readFileSync(mappingPath, 'utf8'));
+      } catch {
+        // empty mapping fallback
+      }
+
+      let accountsList = [];
+      try {
+        accountsList = await api.getAccounts();
+      } catch (err) {
+        logger.error({ err }, 'Failed to fetch Actual Budget accounts for positions export');
+      }
+
+      const { buildStocksLookup, buildPortfolioSnapshots } = require('./exporter');
+      const stocksLookup = buildStocksLookup(mapping.stocks || []);
+      const snapshots = await buildPortfolioSnapshots(mapping.portfolios || [], stocksLookup);
+      const positions = formatPositionsJson(snapshots, accountsList);
+      res.json(positions);
+    })
+  );
+
+  app.get(
+    '/api/export/holdings',
+    asyncHandler(async (_req, res) => {
+      let mapping = { stocks: [], portfolios: [] };
+      try {
+        mapping = JSON.parse(fs.readFileSync(mappingPath, 'utf8'));
+      } catch {
+        // empty mapping fallback
+      }
+
+      const { buildStocksLookup, buildPortfolioSnapshots } = require('./exporter');
+      const stocksLookup = buildStocksLookup(mapping.stocks || []);
+      const snapshots = await buildPortfolioSnapshots(mapping.portfolios || [], stocksLookup);
+      const holdings = formatHoldingsJson(snapshots);
+      res.json(holdings);
     })
   );
 

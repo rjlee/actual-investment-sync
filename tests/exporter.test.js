@@ -1,4 +1,10 @@
-const { generateExportCsv } = require('../src/exporter');
+const {
+  generateExportCsv,
+  formatPositionsJson,
+  formatHoldingsJson,
+  buildStocksLookup,
+  buildPortfolioSnapshots,
+} = require('../src/exporter');
 
 jest.mock('../src/portfolio-client', () => ({
   getStockPrice: jest.fn(),
@@ -66,5 +72,68 @@ describe('generateExportCsv', () => {
     await expect(generateExportCsv('unknown', mapping, [])).rejects.toThrow(
       'Unsupported export format'
     );
+  });
+});
+
+describe('formatPositionsJson', () => {
+  it('returns positions with all expected fields', async () => {
+    const accounts = [
+      { id: 'acct-1', name: 'First Account' },
+      { id: 'acct-2', name: 'Second Account' },
+    ];
+    const stocksLookup = buildStocksLookup(mapping.stocks);
+    const snapshots = await buildPortfolioSnapshots(mapping.portfolios, stocksLookup);
+    const positions = formatPositionsJson(snapshots, accounts);
+
+    expect(positions).toHaveLength(5); // 2 holdings + 1 cash (Portfolio 1) + 1 holding + 1 cash (Portfolio 2)
+
+    const fundA = positions.find((p) => p.holdingName === 'Fund A' && p.assetType === 'Position');
+    expect(fundA).toMatchObject({
+      portfolio: 'Portfolio 1',
+      actualAccountName: 'First Account',
+      actualAccountId: 'acct-1',
+      symbol: 'AAA',
+      provider: 'ft',
+      quantity: 2,
+      unitPrice: 10,
+      marketValue: 20,
+    });
+
+    const cash = positions.find((p) => p.assetType === 'Cash');
+    expect(cash).toMatchObject({
+      portfolio: 'Portfolio 1',
+      holdingName: 'Cash Balance',
+      marketValue: 50,
+    });
+  });
+});
+
+describe('formatHoldingsJson', () => {
+  it('aggregates holdings across portfolios', async () => {
+    const stocksLookup = buildStocksLookup(mapping.stocks);
+    const snapshots = await buildPortfolioSnapshots(mapping.portfolios, stocksLookup);
+    const holdings = formatHoldingsJson(snapshots);
+
+    expect(holdings).toHaveLength(2); // Fund A and Fund B
+
+    const fundA = holdings.find((h) => h.holdingName === 'Fund A');
+    expect(fundA).toMatchObject({
+      holdingName: 'Fund A',
+      symbol: 'AAA',
+      provider: 'ft',
+      totalQuantity: 3, // 2 from Portfolio 1 + 1 from Portfolio 2
+      unitPrice: 10,
+      totalMarketValue: 30,
+    });
+
+    const fundB = holdings.find((h) => h.holdingName === 'Fund B');
+    expect(fundB).toMatchObject({
+      holdingName: 'Fund B',
+      symbol: 'BBB',
+      provider: 'alphavantage',
+      totalQuantity: 3,
+      unitPrice: 20,
+      totalMarketValue: 60,
+    });
   });
 });

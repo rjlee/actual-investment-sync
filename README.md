@@ -89,13 +89,15 @@ Visit `http://localhost:3000` (or your configured port) to map portfolios, updat
 
 The Web UI server exposes REST endpoints under `/api/`:
 
-| Endpoint             | Method | Description                               |
-| -------------------- | ------ | ----------------------------------------- |
-| `/api/data`          | GET    | Returns stocks, portfolios, accounts      |
-| `/api/budget-status` | GET    | Returns budget download status            |
-| `/api/mappings`      | POST   | Saves stock/portfolio mappings            |
-| `/api/sync`          | POST   | Triggers a sync operation                 |
-| `/api/export`        | GET    | Downloads CSV export (positions/holdings) |
+| Endpoint                | Method | Description                                  |
+| ----------------------- | ------ | -------------------------------------------- |
+| `/api/data`             | GET    | Returns stocks, portfolios, accounts         |
+| `/api/budget-status`    | GET    | Returns budget download status               |
+| `/api/mappings`         | POST   | Saves stock/portfolio mappings               |
+| `/api/sync`             | POST   | Triggers a sync operation                    |
+| `/api/export`           | GET    | Downloads CSV export (positions/holdings)    |
+| `/api/export/positions` | GET    | Returns positions data as JSON               |
+| `/api/export/holdings`  | GET    | Returns holdings aggregated by stock as JSON |
 
 #### API Authentication
 
@@ -109,12 +111,14 @@ Bearer token auth is required for these endpoints:
 
 - `/api/data` - Returns stocks, portfolios, accounts
 - `/api/export` - Downloads CSV export
+- `/api/export/positions` - Returns positions data as JSON
+- `/api/export/holdings` - Returns holdings aggregated by stock as JSON
 
 ```bash
 curl -H "Authorization: Bearer your-secret-token" http://localhost:3000/api/data
 ```
 
-If `INVESTMENT_API_TOKEN` is not set, `/api/data` and `/api/export` are publicly accessible.
+If `INVESTMENT_API_TOKEN` is not set, these endpoints are publicly accessible.
 
 ### Docker daemon
 
